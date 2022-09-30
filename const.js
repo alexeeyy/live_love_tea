@@ -2,6 +2,8 @@ const commands = `
 /start - Перезапустити бот
 `;
 
+const adminList = ["558982454"];
+
 const shuList = [
 	{
 		cb_id: "shu-1",
@@ -27,5 +29,9 @@ const shuList = [
 	},
 ];
 
+const teaTypes = ["Шу"];
+
 module.exports.commands = commands;
+module.exports.adminList = adminList;
 module.exports.shuList = shuList;
+module.exports.teaTypes = teaTypes;

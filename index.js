@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { Telegraf, Markup } = require("telegraf");
+const { Telegraf, Markup, Telegram } = require("telegraf");
 const base = require("./const");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -7,11 +7,22 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 //======= START =======//
 bot.start(async (ctx) => {
 	try {
-		return ctx.replyWithHTML("Головне меню:", {
-			reply_markup: {
-				keyboard: [[{ text: "📗  Асортимент" }], [{ text: "⬇️  Підменю" }]],
-				resize_keyboard: true,
-			},
+		base.adminList.forEach((admin) => {
+			if (ctx.from.id == admin) {
+				return ctx.replyWithHTML("Головне меню:", {
+					reply_markup: {
+						keyboard: [[{ text: "📗  Асортимент" }], [{ text: "⬇️  Підменю" }], [{ text: "Адмін меню" }]],
+						resize_keyboard: true,
+					},
+				});
+			} else {
+				return ctx.replyWithHTML("Головне меню:", {
+					reply_markup: {
+						keyboard: [[{ text: "📗  Асортимент" }], [{ text: "⬇️  Підменю" }]],
+						resize_keyboard: true,
+					},
+				});
+			}
 		});
 	} catch (e) {
 		console.error(e);
@@ -115,6 +126,57 @@ base.shuList.forEach((shu, index) => {
 			}
 		});
 	}
+});
+
+//======= ADMIN =======//
+bot.hears("Адмін меню", async (ctx) => {
+	try {
+		base.adminList.forEach((admin) => {
+			if (ctx.from.id == admin) {
+				return ctx.replyWithHTML("Адмін меню:", {
+					reply_markup: {
+						keyboard: [[{ text: "Додати позицію" }, { text: "Видалити позицію" }]],
+						resize_keyboard: true,
+					},
+				});
+			}
+		});
+	} catch (e) {
+		console.error(e);
+	}
+});
+bot.hears("Додати позицію", async (ctx) => {
+	try {
+		base.adminList.forEach((admin) => {
+			if (ctx.from.id == admin) {
+				return ctx.replyWithHTML("Який вид чаю треба додати?", {
+					reply_markup: {
+						inline_keyboard: [[Markup.button.callback("Шу пуер", "new_shu")], [Markup.button.callback("Шен пуер", "shu")], [Markup.button.callback("Червоний", "shu")], [Markup.button.callback("Білий", "shu")], [Markup.button.callback("Зелений", "shu")], [Markup.button.callback("Улун", "shu")]],
+						resize_keyboard: true,
+					},
+				});
+			}
+		});
+	} catch (e) {
+		console.error(e);
+	}
+});
+bot.action("new_shu", async (ctx) => {
+	try {
+		await ctx.answerCbQuery();
+		await ctx.editMessageText("Вкажи назву нового чаю:");
+	} catch (e) {
+		console.error(e);
+	}
+});
+
+bot.on("inline_query", (ctx) => {
+	const result = [];
+	// Explicit usage
+	ctx.telegram.answerInlineQuery(ctx.inlineQuery.id, result);
+
+	// Using context shortcut
+	ctx.answerInlineQuery(result);
 });
 
 // bot.hears("✨  Категоріям", async (ctx) => {

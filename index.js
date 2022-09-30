@@ -44,7 +44,7 @@ bot.hears("🔙  На головну", async (ctx) => {
 	}
 });
 
-bot.hears("📗  Асортимент", async (ctx) => {
+bot.hears(["📗  Асортимент"], async (ctx) => {
 	try {
 		return ctx.replyWithHTML("Ассортимент:", {
 			reply_markup: {
@@ -56,19 +56,35 @@ bot.hears("📗  Асортимент", async (ctx) => {
 		console.error(e);
 	}
 });
+
+bot.action("backToTeas", async (ctx) => {
+	try {
+		await ctx.answerCbQuery();
+		await ctx.deleteMessage();
+		return ctx.replyWithHTML("Ассортимент:", {
+			reply_markup: {
+				inline_keyboard: [[Markup.button.callback("Шу пуер", "shu")], [Markup.button.callback("Шен пуер", "shu")], [Markup.button.callback("Червоний", "shu")], [Markup.button.callback("Білий", "shu")], [Markup.button.callback("Зелений", "shu")], [Markup.button.callback("Улун", "shu")]],
+				resize_keyboard: true,
+			},
+		});
+	} catch (e) {
+		console.error(e);
+	}
+});
+
 bot.action("shu", async (ctx) => {
 	try {
 		await ctx.answerCbQuery();
 		await ctx.deleteMessage();
 		return ctx.replyWithPhoto(
 			{
-				source: base.shuList.first.src,
+				source: base.shuList[0].src,
 			},
 			{
-				caption: base.shuList.first.title + base.shuList.first.description + base.shuList.first.price,
+				caption: base.shuList[0].title + base.shuList[0].description + base.shuList[0].price,
 				parse_mode: "HTML",
 				reply_markup: {
-					inline_keyboard: [[Markup.button.callback("Придбати", "buy")], [Markup.button.callback("🛒 0.00₴", "buy")], [Markup.button.callback("⬅️", "backward"), Markup.button.callback("1/2", "number"), Markup.button.callback("➡️", "forward")], [Markup.button.callback("↩️  назад", "backToTeas")]],
+					inline_keyboard: [[Markup.button.callback("Придбати", "buy")], [Markup.button.callback("🛒 0.00₴", "buy")], [Markup.button.callback("⬅️", "backward"), Markup.button.callback(`1/${base.shuList.length}`, "number"), Markup.button.callback("➡️", `shu-2`)], [Markup.button.callback("↩️  назад", "backToTeas")]],
 				},
 			}
 		);
@@ -76,6 +92,31 @@ bot.action("shu", async (ctx) => {
 		console.error(e);
 	}
 });
+
+base.shuList.forEach((shu, index) => {
+	if (index !== base.shuList.length) {
+		bot.action(shu.cb_id, async (ctx) => {
+			try {
+				await ctx.answerCbQuery();
+				return ctx.editMessageCaption(
+					{
+						source: shu.src,
+					},
+					{
+						caption: shu.title + shu.description + shu.price,
+						parse_mode: "HTML",
+						reply_markup: {
+							inline_keyboard: [[Markup.button.callback("Придбати", "buy")], [Markup.button.callback("🛒 0.00₴", "buy")], [Markup.button.callback("⬅️", `shu-${index}`), Markup.button.callback(`${index + 1}/${base.shuList.length}`, "number"), Markup.button.callback("➡️", `shu-${index + 2}`)], [Markup.button.callback("↩️  назад", "backToTeas")]],
+						},
+					}
+				);
+			} catch (e) {
+				console.error(e);
+			}
+		});
+	}
+});
+
 // bot.hears("✨  Категоріям", async (ctx) => {
 // 	try {
 // 		return ctx.replyWithHTML("Категорії:", {

@@ -11,14 +11,14 @@ bot.start(async (ctx) => {
 			if (ctx.from.id == admin) {
 				return ctx.replyWithHTML("Головне меню:", {
 					reply_markup: {
-						keyboard: [[{ text: "📗  Асортимент" }], [{ text: "⬇️  Підменю" }], [{ text: "Адмін меню" }]],
+						keyboard: [[{ text: "🧧  Чайна розсилка" }], [{ text: "📗  Асортимент" }], [{ text: "⬇️  Підменю" }], [{ text: "Адмін меню" }]],
 						resize_keyboard: true,
 					},
 				});
 			} else {
 				return ctx.replyWithHTML("Головне меню:", {
 					reply_markup: {
-						keyboard: [[{ text: "📗  Асортимент" }], [{ text: "⬇️  Підменю" }]],
+						keyboard: [[{ text: "🧧  Чайна розсилка" }], [{ text: "📗  Асортимент" }], [{ text: "⬇️  Підменю" }]],
 						resize_keyboard: true,
 					},
 				});
@@ -46,7 +46,7 @@ bot.hears("🔙  На головну", async (ctx) => {
 	try {
 		return ctx.replyWithHTML("Головне меню:", {
 			reply_markup: {
-				keyboard: [[{ text: "📗  Асортимент" }], [{ text: "⬇️  Підменю" }]],
+				keyboard: [[{ text: "🧧  Чайна розсилка" }], [{ text: "📗  Асортимент" }], [{ text: "⬇️  Підменю" }]],
 				resize_keyboard: true,
 			},
 		});
@@ -60,6 +60,19 @@ bot.hears(["📗  Асортимент"], async (ctx) => {
 		return ctx.replyWithHTML("Ассортимент:", {
 			reply_markup: {
 				inline_keyboard: [[Markup.button.callback("Шу пуер", "shu")], [Markup.button.callback("Шен пуер", "shu")], [Markup.button.callback("Червоний", "shu")], [Markup.button.callback("Білий", "shu")], [Markup.button.callback("Зелений", "shu")], [Markup.button.callback("Улун", "shu")]],
+				resize_keyboard: true,
+			},
+		});
+	} catch (e) {
+		console.error(e);
+	}
+});
+
+bot.hears(["🧧  Чайна розсилка"], async (ctx) => {
+	try {
+		return ctx.replyWithHTML("Опис чайної розсилки, якийсь текст, бла-бла-бла", {
+			reply_markup: {
+				inline_keyboard: [[Markup.button.url("Предзамовлення", "t.me/original_amet")]],
 				resize_keyboard: true,
 			},
 		});

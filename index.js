@@ -31,11 +31,17 @@ bot.start(async (ctx) => {
 
 bot.hears("⬇️  Підменю", async (ctx) => {
 	try {
-		return ctx.replyWithHTML("Підменю:", {
-			reply_markup: {
-				keyboard: [[{ text: "📜  Мої замовлення" }, { text: "🛒  Кошик" }], [{ text: "📞  Контакти" }, { text: "❗  Інформація" }], [{ text: "🆘  Повідомити про помилку" }], [{ text: "🔙  На головну" }]],
-				resize_keyboard: true,
-			},
+		base.adminList.forEach((admin) => {
+			if (ctx.from.id == admin) {
+				return ctx.replyWithHTML("Підменю:", {
+					reply_markup: {
+						keyboard: [[{ text: "📜  Мої замовлення" }, { text: "🛒  Кошик" }], [{ text: "📞  Контакти" }, { text: "❗  Інформація" }], [{ text: "🆘  Повідомити про помилку" }], [{ text: "🔙  На головну" }]],
+						resize_keyboard: true,
+					},
+				});
+			} else {
+				return ctx.replyWithHTML("Розділ в розробці.");
+			}
 		});
 	} catch (e) {
 		console.error(e);
@@ -57,11 +63,17 @@ bot.hears("🔙  На головну", async (ctx) => {
 
 bot.hears(["📗  Асортимент"], async (ctx) => {
 	try {
-		return ctx.replyWithHTML("Ассортимент:", {
-			reply_markup: {
-				inline_keyboard: [[Markup.button.callback("Шу пуер", "shu")], [Markup.button.callback("Шен пуер", "shu")], [Markup.button.callback("Червоний", "shu")], [Markup.button.callback("Білий", "shu")], [Markup.button.callback("Зелений", "shu")], [Markup.button.callback("Улун", "shu")]],
-				resize_keyboard: true,
-			},
+		base.adminList.forEach((admin) => {
+			if (ctx.from.id == admin) {
+				return ctx.replyWithHTML("Ассортимент:", {
+					reply_markup: {
+						inline_keyboard: [[Markup.button.callback("Шу пуер", "shu")], [Markup.button.callback("Шен пуер", "shu")], [Markup.button.callback("Червоний", "shu")], [Markup.button.callback("Білий", "shu")], [Markup.button.callback("Зелений", "shu")], [Markup.button.callback("Улун", "shu")]],
+						resize_keyboard: true,
+					},
+				});
+			} else {
+				return ctx.replyWithHTML("Розділ в розробці.");
+			}
 		});
 	} catch (e) {
 		console.error(e);
@@ -70,12 +82,19 @@ bot.hears(["📗  Асортимент"], async (ctx) => {
 
 bot.hears(["🧧  Чайна розсилка"], async (ctx) => {
 	try {
-		return ctx.replyWithHTML("Опис чайної розсилки, якийсь текст, бла-бла-бла", {
-			reply_markup: {
-				inline_keyboard: [[Markup.button.url("Предзамовлення", "t.me/original_amet")]],
-				resize_keyboard: true,
+		return ctx.replyWithPhoto(
+			{
+				source: base.teaSend.src,
 			},
-		});
+			{
+				caption: base.teaSend.text,
+				parse_mode: "HTML",
+				reply_markup: {
+					inline_keyboard: [[Markup.button.url("Оформити предзамовлення", "t.me/original_amet")]],
+					resize_keyboard: true,
+				},
+			}
+		);
 	} catch (e) {
 		console.error(e);
 	}

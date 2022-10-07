@@ -1,8 +1,10 @@
 require("dotenv").config();
-const { Telegraf, Markup, Telegram } = require("telegraf");
+const { Telegraf, Markup, Scenes } = require("telegraf");
 const base = require("./const");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
+
+const testt = "";
 
 //======= START =======//
 bot.start(async (ctx) => {
@@ -42,6 +44,36 @@ bot.hears("⬇️  Підменю", async (ctx) => {
 			} else {
 				return ctx.replyWithHTML("Розділ в розробці.");
 			}
+		});
+	} catch (e) {
+		console.error(e);
+	}
+});
+
+bot.hears("❗  Інформація", async (ctx) => {
+	try {
+		return ctx.replyWithHTML(base.text.info.text);
+	} catch (e) {
+		console.error(e);
+	}
+});
+bot.hears("📞  Контакти", async (ctx) => {
+	try {
+		return ctx.replyWithHTML(base.text.contacts.text, {
+			reply_markup: {
+				inline_keyboard: [[Markup.button.url("Амєт", "t.me/original_amet"), Markup.button.url("Максим", "t.me/chefuknow")]],
+				resize_keyboard: true,
+			},
+		});
+	} catch (e) {
+		console.error(e);
+	}
+});
+bot.hears("🆘  Повідомити про помилку", async (ctx) => {
+	try {
+		await ctx.replyWithHTML("Опишіть помилку:");
+		return bot.on("message", async (ctx) => {
+			return bot.on("text", ctx.reply(ctx.message.text));
 		});
 	} catch (e) {
 		console.error(e);
@@ -200,15 +232,6 @@ bot.action("new_shu", async (ctx) => {
 	} catch (e) {
 		console.error(e);
 	}
-});
-
-bot.on("inline_query", (ctx) => {
-	const result = [];
-	// Explicit usage
-	ctx.telegram.answerInlineQuery(ctx.inlineQuery.id, result);
-
-	// Using context shortcut
-	ctx.answerInlineQuery(result);
 });
 
 // bot.hears("✨  Категоріям", async (ctx) => {

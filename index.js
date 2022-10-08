@@ -1,10 +1,7 @@
 require("dotenv").config();
-const { Telegraf, Markup, Scenes } = require("telegraf");
+const { Telegraf, Markup } = require("telegraf");
 const base = require("./const");
-
 const bot = new Telegraf(process.env.BOT_TOKEN);
-
-const testt = "";
 
 //======= START =======//
 bot.start(async (ctx) => {
@@ -71,14 +68,28 @@ bot.hears("📞  Контакти", async (ctx) => {
 });
 bot.hears("🆘  Повідомити про помилку", async (ctx) => {
 	try {
-		await ctx.replyWithHTML("Опишіть помилку:");
-		return bot.on("message", async (ctx) => {
-			return bot.on("text", ctx.reply(ctx.message.text));
-		});
+		await ctx.replyWithHTML("Опишіть помилку (наступне повідомлення):");
+		if (ctx.message.text == "🆘  Повідомити про помилку") {
+			return notifyAboutError(ctx.message.message_id, ctx.message.from.id);
+		}
 	} catch (e) {
 		console.error(e);
 	}
 });
+
+function notifyAboutError(message_id, from_id, active = true) {
+	bot.on("message", async (ctx) => {
+		try {
+			if (ctx.message.message_id >= message_id + 2 && ctx.message.from.id == from_id && active == true) {
+				await ctx.forwardMessage(base.adminList[0], ctx.message.from.id, ctx.message.message_id + 4);
+				active = false;
+				return ctx.reply("Дякую за Ваше повідомлення 🙏");
+			}
+		} catch (e) {
+			console.error(e);
+		}
+	});
+}
 
 bot.hears("🔙  На головну", async (ctx) => {
 	try {
